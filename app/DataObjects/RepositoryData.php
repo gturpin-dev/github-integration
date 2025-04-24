@@ -22,7 +22,7 @@ final class RepositoryData extends Data
 
         #[MapInputName('private')]
         public readonly bool $isPrivate,
-        public readonly string $description,
+        public readonly ?string $description,
 
         #[MapInputName('created_at')]
         #[WithCast(CarbonInterfaceCast::class)]

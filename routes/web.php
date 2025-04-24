@@ -18,3 +18,10 @@ Route::get('/repositories/{owner}/{repositoryName}', function (string $owner, st
         ),
     );
 })->name('repositories.show');
+
+Route::get('/repositories/{owner}', function (string $owner, GithubContract $githubService) {
+    dd(
+        $owner,
+        $githubService->getRepositories($owner),
+    );
+})->name('repositories.index');

@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Saloon\Http\Auth\TokenAuthenticator;
+use Saloon\Http\Auth\BasicAuthenticator;
+use Illuminate\Support\Facades\Storage;
+use Firebase\JWT\JWT;
 use App\Http\Integrations\Github\Requests\GetRepositoryRequest;
+use App\Http\Integrations\Github\Requests\GetRepositoriesRequest;
 use App\Http\Integrations\Github\GithubConnector;
 use App\DataObjects\UpdateRepositoryData;
 use App\DataObjects\RepositoryData;
 use App\DataObjects\NewRepositoryData;
 use App\Contracts\GithubContract;
 use App\Collections\Github\RepositoryCollection;
-use Firebase\JWT\JWT;
-use Illuminate\Support\Facades\Storage;
-use Saloon\Http\Auth\BasicAuthenticator;
 
 final class GithubService implements GithubContract
 {
@@ -22,7 +23,15 @@ final class GithubService implements GithubContract
         private string $privateKey,
     ) {}
 
-    public function getRepositories(): RepositoryCollection { }
+    public function getRepositories(string $owner): RepositoryCollection {
+        return $this->connector()
+            ->send(
+                new GetRepositoriesRequest(
+                    $owner,
+                )
+            )
+            ->dtoOrFail();
+    }
 
     public function getRepository(string $owner, string $repositoryName): RepositoryData {
         return $this->connector()

@@ -11,7 +11,7 @@ use App\Collections\Github\RepositoryCollection;
 
 interface GithubContract
 {
-    public function getRepositories(): RepositoryCollection;
+    public function getRepositories(string $owner): RepositoryCollection;
 
     public function getRepository(string $owner, string $repositoryName): RepositoryData;
 

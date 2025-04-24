@@ -24,11 +24,7 @@ class GetRepositoryRequest extends Request
      */
     public function resolveEndpoint(): string
     {
-        return sprintf(
-            '/repos/%s/%s',
-            $this->owner,
-            $this->repositoryName,
-        );
+        return sprintf( '/repos/%s/%s', $this->owner, $this->repositoryName );
     }
 
     public function createDtoFromResponse(Response $response): mixed
