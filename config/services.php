@@ -36,10 +36,10 @@ return [
     ],
 
     'github' => [
-        'token' => env('GITHUB_TOKEN'),
+        'app_id' => env('GITHUB_APP_ID'),
         'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect' => env('GITHUB_REDIRECT_URI'),
+        'private_key_path' => env('GITHUB_PRIVATE_KEY_PATH'),
     ],
 
 ];
