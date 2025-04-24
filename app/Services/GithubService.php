@@ -12,28 +12,27 @@ use App\DataObjects\RepositoryData;
 use App\DataObjects\NewRepositoryData;
 use App\Contracts\GithubContract;
 use App\Collections\Github\RepositoryCollection;
+use Firebase\JWT\JWT;
+use Illuminate\Support\Facades\Storage;
+use Saloon\Http\Auth\BasicAuthenticator;
 
 final class GithubService implements GithubContract
 {
     public function __construct(
-        private string $token,
+        private string $privateKey,
     ) {}
 
     public function getRepositories(): RepositoryCollection { }
 
     public function getRepository(string $owner, string $repositoryName): RepositoryData {
-        $connector = $this->connector();
-        $response  = $connector->send(
-            new GetRepositoryRequest(
-                $owner,
-                $repositoryName,
+        return $this->connector()
+            ->send(
+                new GetRepositoryRequest(
+                    $owner,
+                    $repositoryName,
+                )
             )
-        );
-
-        dd(
-            $response->json(),
-        );
-        // return RepositoryData::fromResponse($response);
+            ->dtoOrFail();
     }
 
     public function getRepositoryLanguages(string $owner, string $repositoryName): array { }
@@ -46,9 +45,8 @@ final class GithubService implements GithubContract
 
     protected function connector(): GithubConnector
     {
-        return app(GithubConnector::class)
-            ->authenticate(new TokenAuthenticator(
-                $this->token,
-            ));
+        return app(GithubConnector::class, [
+            'privateKey' => $this->privateKey,
+        ]);
     }
 }

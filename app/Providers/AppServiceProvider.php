@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Contracts\GithubContract;
-use App\Services\GithubService;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Storage;
+use Firebase\JWT\JWT;
+use App\Services\GithubService;
+use App\Contracts\GithubContract;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             abstract: GithubContract::class,
             concrete: fn (): GithubContract => new GithubService(
-                token: config('services.github.token'),
+                privateKey: Storage::disk('private')->get(config('services.github.private_key_path')),
             )
         );
     }

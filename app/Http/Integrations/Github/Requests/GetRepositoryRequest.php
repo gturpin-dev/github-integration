@@ -2,8 +2,10 @@
 
 namespace App\Http\Integrations\Github\Requests;
 
-use Saloon\Enums\Method;
+use Saloon\Http\Response;
 use Saloon\Http\Request;
+use Saloon\Enums\Method;
+use App\DataObjects\RepositoryData;
 
 class GetRepositoryRequest extends Request
 {
@@ -27,5 +29,10 @@ class GetRepositoryRequest extends Request
             $this->owner,
             $this->repositoryName,
         );
+    }
+
+    public function createDtoFromResponse(Response $response): mixed
+    {
+        return RepositoryData::from($response->json());
     }
 }

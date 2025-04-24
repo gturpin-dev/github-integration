@@ -1,9 +1,6 @@
 <?php
 
 use App\Contracts\GithubContract;
-use App\Http\Integrations\Github\GithubConnector;
-use App\Http\Integrations\Github\Requests\GetRepositoryRequest;
-use App\Services\GithubService;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,7 +12,6 @@ Route::get('/repositories/{owner}/{repositoryName}', function (string $owner, st
     dd(
         $owner,
         $repositoryName,
-        $githubService,
         $githubService->getRepository(
             $owner,
             $repositoryName,
