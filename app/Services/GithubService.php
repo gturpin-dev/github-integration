@@ -24,13 +24,11 @@ final class GithubService implements GithubContract
     ) {}
 
     public function getRepositories(string $owner): RepositoryCollection {
-        return $this->connector()
-            ->send(
-                new GetRepositoriesRequest(
-                    $owner,
-                )
-            )
-            ->dtoOrFail();
+        $request = new GetRepositoriesRequest( $owner );
+
+        return new RepositoryCollection(
+            $request->paginate($this->connector())->collect()
+        );
     }
 
     public function getRepository(string $owner, string $repositoryName): RepositoryData {

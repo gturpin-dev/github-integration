@@ -5,10 +5,7 @@ namespace App\Http\Integrations\Github;
 use Saloon\Traits\Plugins\AcceptsJson;
 use Saloon\Traits\OAuth2\AuthorizationCodeGrant;
 use Saloon\Http\Connector;
-use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Helpers\OAuth2\OAuthConfig;
-use Saloon\Contracts\Authenticator;
-use Firebase\JWT\JWT;
 
 final class GithubConnector extends Connector
 {

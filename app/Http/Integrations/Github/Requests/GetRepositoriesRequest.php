@@ -2,13 +2,18 @@
 
 namespace App\Http\Integrations\Github\Requests;
 
-use App\Collections\Github\RepositoryCollection;
-use App\DataObjects\RepositoryData;
-use Saloon\Enums\Method;
-use Saloon\Http\Request;
+use Saloon\PaginationPlugin\Contracts\Paginatable;
 use Saloon\Http\Response;
+use Saloon\Http\Request;
+use Saloon\Enums\Method;
+use App\DataObjects\RepositoryData;
+use App\Collections\Github\RepositoryCollection;
+use App\Http\Integrations\Github\Paginations\GithubPagedPaginator;
+use Saloon\Http\Connector;
+use Saloon\PaginationPlugin\Contracts\HasRequestPagination;
+use Saloon\PaginationPlugin\Paginator;
 
-class GetRepositoriesRequest extends Request
+class GetRepositoriesRequest extends Request implements Paginatable, HasRequestPagination
 {
     /**
      * The HTTP method of the request
@@ -19,6 +24,10 @@ class GetRepositoriesRequest extends Request
         private string $owner,
     ) {}
 
+    public function paginate(Connector $connector): Paginator {
+        return new GithubPagedPaginator($connector, $this);
+    }
+
     /**
      * The endpoint for the request
      */
@@ -27,8 +36,11 @@ class GetRepositoriesRequest extends Request
         return sprintf('/users/%s/repos', $this->owner);
     }
 
-    public function createDtoFromResponse(Response $response): RepositoryCollection
+    public function createDtoFromResponse(Response $response): array
     {
-        return (new RepositoryCollection($response->json()))->map(fn (array $repositoryData) => RepositoryData::from($repositoryData));
+        return array_map(
+            fn (array $repositoryData) => RepositoryData::from($repositoryData),
+            $response->json()
+        );
     }
 }
