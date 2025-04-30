@@ -12,10 +12,16 @@ use Illuminate\Support\Facades\Cache;
 use App\Http\Integrations\Github\Requests\GenerateInstallationAccessTokenRequest;
 use App\DataObjects\GithubJWTData;
 use App\DataObjects\GithubInstallationAccessTokenData;
+use Saloon\Exceptions\Request\FatalRequestException;
+use Saloon\Exceptions\Request\RequestException;
+use Saloon\Http\Request;
 
 final class GithubConnector extends Connector
 {
     use AcceptsJson;
+
+    public ?int $tries = 3;
+    public ?int $retryInterval = 100;
 
     public function __construct(
         private readonly string $installationId,
@@ -31,15 +37,38 @@ final class GithubConnector extends Connector
             return $authenticator;
         }
 
+        return $this->refreshToken();
+    }
+
+    /**
+     * Handle out-of-date token errors and refresh it on the fly
+     */
+    public function handleRetry(FatalRequestException|RequestException $exception, Request $request): bool
+    {
+        // Handle only out-of-date token errors
+        if (! $exception instanceof RequestException) return false;
+        if ($exception->getStatus() !== 401) return false;
+
+        $this->refreshToken();
+
+        return true;
+    }
+
+    /**
+     * Refresh the token for the connector and update the authenticator in the cache
+     */
+    private function refreshToken(): TokenAuthenticator {
         $installationAccessToken = $this->generateInstallationAccessToken();
         $tokenAuthenticator      = new TokenAuthenticator($installationAccessToken->value);
 
         Cache::put('github.token-authenticator', $tokenAuthenticator, $installationAccessToken->expires_at);
 
+        $this->authenticate($tokenAuthenticator);
+
         return $tokenAuthenticator;
     }
 
-    protected function generateInstallationAccessToken(): GithubInstallationAccessTokenData
+    private function generateInstallationAccessToken(): GithubInstallationAccessTokenData
     {
         return $this->send(new GenerateInstallationAccessTokenRequest(
             installationId: $this->installationId,
