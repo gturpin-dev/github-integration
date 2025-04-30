@@ -15,7 +15,6 @@ use App\DataObjects\GithubInstallationAccessTokenData;
 
 final class GithubConnector extends Connector
 {
-    use AuthorizationCodeGrant;
     use AcceptsJson;
 
     public function __construct(
@@ -62,20 +61,5 @@ final class GithubConnector extends Connector
         return [
             'Accept' => 'application/vnd.github+json',
         ];
-    }
-
-    /**
-     * The OAuth2 configuration
-     */
-    protected function defaultOauthConfig(): OAuthConfig
-    {
-        return OAuthConfig::make()
-            ->setClientId(config('services.github.client_id'))
-            ->setClientSecret(config('services.github.client_secret'))
-            ->setRedirectUri('')
-            ->setDefaultScopes([])
-            ->setAuthorizeEndpoint('authorize')
-            ->setTokenEndpoint('token')
-            ->setUserEndpoint('user');
     }
 }
