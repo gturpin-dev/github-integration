@@ -20,7 +20,9 @@ use App\Collections\Github\RepositoryCollection;
 final class GithubService implements GithubContract
 {
     public function __construct(
-        private string $privateKey,
+        private readonly string $installationId,
+        private readonly string $clientId,
+        private readonly string $privateKey,
     ) {}
 
     public function getRepositories(string $owner): RepositoryCollection {
@@ -53,7 +55,9 @@ final class GithubService implements GithubContract
     protected function connector(): GithubConnector
     {
         return app(GithubConnector::class, [
-            'privateKey' => $this->privateKey,
+            'installationId' => $this->installationId,
+            'clientId'       => $this->clientId,
+            'privateKey'     => $this->privateKey,
         ]);
     }
 }

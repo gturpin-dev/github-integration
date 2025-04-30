@@ -18,7 +18,9 @@ final class GithubConnector extends Connector
     use AcceptsJson;
 
     public function __construct(
-        private string $privateKey
+        private readonly string $installationId,
+        private readonly string $clientId,
+        private readonly string $privateKey
     ) {}
 
     protected function defaultAuth(): ?Authenticator
@@ -40,9 +42,9 @@ final class GithubConnector extends Connector
     protected function generateInstallationAccessToken(): GithubInstallationAccessTokenData
     {
         return $this->send(new GenerateInstallationAccessTokenRequest(
-            installationId: config('services.github.installation_id'),
+            installationId: $this->installationId,
             jwt           : GithubJWTData::from_credentials(
-                clientId  : config('services.github.client_id'),
+                clientId  : $this->clientId,
                 privateKey: $this->privateKey,
             )
         ))->dtoOrFail();
