@@ -37,6 +37,7 @@ return [
 
     'github' => [
         'app_id' => env('GITHUB_APP_ID'),
+        'installation_id' => env('GITHUB_INSTALLATION_ID'),
         'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
         'private_key_path' => env('GITHUB_PRIVATE_KEY_PATH'),

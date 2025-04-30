@@ -5,7 +5,13 @@ namespace App\Http\Integrations\Github;
 use Saloon\Traits\Plugins\AcceptsJson;
 use Saloon\Traits\OAuth2\AuthorizationCodeGrant;
 use Saloon\Http\Connector;
+use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Helpers\OAuth2\OAuthConfig;
+use Saloon\Contracts\Authenticator;
+use Illuminate\Support\Facades\Cache;
+use App\Http\Integrations\Github\Requests\GenerateInstallationAccessTokenRequest;
+use App\DataObjects\GithubJWTData;
+use App\DataObjects\GithubInstallationAccessTokenData;
 
 final class GithubConnector extends Connector
 {
@@ -16,21 +22,32 @@ final class GithubConnector extends Connector
         private string $privateKey
     ) {}
 
-    // protected function defaultAuth(): ?Authenticator
-    // {
-    //     return new TokenAuthenticator(
-    //         token: JWT::encode(
-    //             payload: [
-    //                 'iat' => time() - 60,
-    //                 'exp' => time() + (10 * 60),
-    //                 'iss' => $this->oauthConfig()->getClientId(),
-    //                 'alg' => 'RS256',
-    //             ],
-    //             key: $this->privateKey,
-    //             alg: 'RS256'
-    //         )
-    //     );
-    // }
+    protected function defaultAuth(): ?Authenticator
+    {
+        $authenticator = Cache::get('github.token-authenticator');
+
+        if ($authenticator instanceof TokenAuthenticator) {
+            return $authenticator;
+        }
+
+        $installationAccessToken = $this->generateInstallationAccessToken();
+        $tokenAuthenticator      = new TokenAuthenticator($installationAccessToken->value);
+
+        Cache::put('github.token-authenticator', $tokenAuthenticator, $installationAccessToken->expires_at);
+
+        return $tokenAuthenticator;
+    }
+
+    protected function generateInstallationAccessToken(): GithubInstallationAccessTokenData
+    {
+        return $this->send(new GenerateInstallationAccessTokenRequest(
+            installationId: config('services.github.installation_id'),
+            jwt           : GithubJWTData::from_credentials(
+                clientId  : config('services.github.client_id'),
+                privateKey: $this->privateKey,
+            )
+        ))->dtoOrFail();
+    }
 
     /**
      * The Base URL of the API.

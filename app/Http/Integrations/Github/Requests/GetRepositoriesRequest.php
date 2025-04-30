@@ -7,7 +7,6 @@ use Saloon\Http\Response;
 use Saloon\Http\Request;
 use Saloon\Enums\Method;
 use App\DataObjects\RepositoryData;
-use App\Collections\Github\RepositoryCollection;
 use App\Http\Integrations\Github\Paginations\GithubPagedPaginator;
 use Saloon\Http\Connector;
 use Saloon\PaginationPlugin\Contracts\HasRequestPagination;
@@ -24,16 +23,16 @@ class GetRepositoriesRequest extends Request implements Paginatable, HasRequestP
         private string $owner,
     ) {}
 
-    public function paginate(Connector $connector): Paginator {
-        return new GithubPagedPaginator($connector, $this);
-    }
-
     /**
      * The endpoint for the request
      */
     public function resolveEndpoint(): string
     {
         return sprintf('/users/%s/repos', $this->owner);
+    }
+
+    public function paginate(Connector $connector): Paginator {
+        return new GithubPagedPaginator($connector, $this);
     }
 
     public function createDtoFromResponse(Response $response): array
