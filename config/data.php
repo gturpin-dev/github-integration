@@ -1,5 +1,8 @@
 <?php
 
+use App\DataObjects\Casts\CarbonInterfaceCast;
+use Carbon\CarbonInterface;
+
 return [
     /*
      * The package will use this format when working with dates. If this option
@@ -49,6 +52,7 @@ return [
         DateTimeInterface::class => Spatie\LaravelData\Casts\DateTimeInterfaceCast::class,
         BackedEnum::class => Spatie\LaravelData\Casts\EnumCast::class,
 //        Enumerable::class => Spatie\LaravelData\Casts\EnumerableCast::class,
+        CarbonInterface::class => CarbonInterfaceCast::class
     ],
 
     /*

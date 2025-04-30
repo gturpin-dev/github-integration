@@ -25,7 +25,6 @@ final class RepositoryData extends Data
         public readonly ?string $description,
 
         #[MapInputName('created_at')]
-        #[WithCast(CarbonInterfaceCast::class)]
         public readonly CarbonInterface $createdAt,
     ) {}
 }
