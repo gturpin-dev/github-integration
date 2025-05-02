@@ -16,6 +16,7 @@ use App\DataObjects\RepositoryData;
 use App\DataObjects\NewRepositoryData;
 use App\Contracts\GithubContract;
 use App\Collections\Github\RepositoryCollection;
+use App\Http\Integrations\Github\Requests\GetRepositoryLanguagesRequest;
 
 final class GithubService implements GithubContract
 {
@@ -44,7 +45,21 @@ final class GithubService implements GithubContract
             ->dtoOrFail();
     }
 
-    public function getRepositoryLanguages(string $owner, string $repositoryName): array { }
+    /**
+     * @return array<string> Languages names
+     */
+    public function getRepositoryLanguages(string $owner, string $repositoryName): array {
+        return $this->connector()
+            ->send(
+                new GetRepositoryLanguagesRequest(
+                    $owner,
+                    $repositoryName,
+                )
+            )
+            ->collect()
+            ->keys()
+            ->all();
+    }
 
     public function createRepository(NewRepositoryData $repositoryData): RepositoryData { }
 
