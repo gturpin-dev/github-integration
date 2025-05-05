@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Github;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Contracts\GithubContract;
+use App\DataObjects\NewRepositoryData;
 
 class GithubRepositoryController extends Controller
 {
@@ -24,13 +25,15 @@ class GithubRepositoryController extends Controller
     //     //
     // }
 
-    // /**
-    //  * Store a newly created resource in storage.
-    //  */
-    // public function store(Request $request)
-    // {
-    //     //
-    // }
+    /**
+     * Store a newly created resource in storage.
+     */
+    public static function store(NewRepositoryData $newRepositoryData, GithubContract $githubService)
+    {
+        return $githubService->createRepository(
+            $newRepositoryData
+        );
+    }
 
     /**
      * Display the specified resource.
