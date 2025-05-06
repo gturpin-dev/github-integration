@@ -1,4 +1,3 @@
-
 <flux:sidebar sticky stashable class="bg-zinc-50 dark:bg-zinc-900 border-r rtl:border-r-0 rtl:border-l border-zinc-200 dark:border-zinc-700">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
@@ -8,7 +7,22 @@
     <flux:input as="button" variant="filled" placeholder="Search..." icon="magnifying-glass" />
 
     <flux:navlist variant="outline">
-        <flux:navlist.item icon="home" href="#" current>Home</flux:navlist.item>
+        <flux:navlist.item
+            icon="home"
+            href="{{ route('welcome') }}"
+            :current="request()->routeIs('welcome')"
+        >
+            Home
+        </flux:navlist.item>
+
+        <flux:navlist.item
+            icon="folder"
+            href="{{ route('repositories.index', 'gturpin-dev') }}"
+            :current="request()->routeIs('repositories.index')"
+        >
+            Repositories
+        </flux:navlist.item>
+
         <flux:navlist.item icon="inbox" badge="12" href="#">Inbox</flux:navlist.item>
         <flux:navlist.item icon="document-text" href="#">Documents</flux:navlist.item>
         <flux:navlist.item icon="calendar" href="#">Calendar</flux:navlist.item>
@@ -72,11 +86,3 @@
         <flux:navbar.item href="#">Configuration</flux:navbar.item>
     </flux:navbar>
 </flux:header>
-
-<flux:main>
-    <flux:heading size="xl" level="1">Good afternoon, Olivia</flux:heading>
-
-    <flux:text class="mb-6 mt-2 text-base">Here's what's new today</flux:text>
-
-    <flux:separator variant="subtle" />
-</flux:main>

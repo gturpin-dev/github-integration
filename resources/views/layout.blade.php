@@ -17,8 +17,11 @@
     @vite('resources/css/app.css')
 </head>
 <body class="min-h-screen bg-white dark:bg-zinc-800">
-
     @include('navigation')
+
+    <flux:main>
+        @yield('content')
+    </flux:main>
 
     @livewireScripts
     @fluxScripts

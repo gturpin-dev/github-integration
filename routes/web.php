@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::view('/test', 'layout');
 

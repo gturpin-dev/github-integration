@@ -6,15 +6,18 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Contracts\GithubContract;
 use App\DataObjects\NewRepositoryData;
+use Illuminate\View\View;
 
 class GithubRepositoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public static function index(string $owner, GithubContract $githubService)
+    public static function index(string $owner, GithubContract $githubService): View
     {
-        return $githubService->getRepositories($owner);
+        return view('github.repositories.index', [
+            'repositories' => $githubService->getRepositories($owner)->sortByCreationDate(),
+        ]);
     }
 
     // /**
