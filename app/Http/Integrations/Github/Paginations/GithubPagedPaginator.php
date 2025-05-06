@@ -16,6 +16,10 @@ final class GithubPagedPaginator extends PagedPaginator
         $links       = $response->header('Link');
         $nextPattern = '/(?<=<)([\S]*)(?=>; rel="Next")/i';
 
+        if ($links === null) {
+            return true;
+        }
+
         if (preg_match($nextPattern, $links)) {
             return false;
         }
