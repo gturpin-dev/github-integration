@@ -9,6 +9,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::view('/test', 'layout');
+
 Route::prefix('repositories')
     ->name('repositories.')
     ->group(function () {
