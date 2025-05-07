@@ -18,7 +18,7 @@
         <flux:navlist.item
             icon="folder"
             href="{{ route('repositories.index', 'gturpin-dev') }}"
-            :current="request()->routeIs('repositories.index')"
+            :current="request()->routeIs('repositories.*')"
         >
             Repositories
         </flux:navlist.item>

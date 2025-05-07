@@ -7,7 +7,7 @@
 
     <flux:text class="mb-6 mt-2 text-base">This is my repositories listing</flux:text>
 
-    <div class="flex items-center justify-end mb-4">
+    <div class="flex items-center justify-end my-4">
         <flux:button href="{{ route('repositories.create') }}" class="cursor-pointer" variant="primary" icon="plus-circle">Create a new Repository</flux:button>
     </div>
 
