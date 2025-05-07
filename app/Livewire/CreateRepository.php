@@ -2,10 +2,12 @@
 
 namespace App\Livewire;
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\RedirectResponse;
+use App\DataObjects\NewRepositoryData;
+use App\Actions\CreateGithubRepositoryAction;
 
 class CreateRepository extends Component
 {
@@ -20,11 +22,13 @@ class CreateRepository extends Component
     {
         $this->validate();
 
-        Log::info([
-            'name' => $this->name,
-            'description' => $this->description,
-            'is_private' => ! $this->is_public,
-        ]);
+        (new CreateGithubRepositoryAction(
+            new NewRepositoryData(
+                name       : $this->name,
+                description: $this->description,
+                isPrivate  : ! $this->is_public,
+            )
+        ))->execute();
 
         session()->flash('status', 'Repository created successfully !');
 
