@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Contracts\GithubContract;
 use App\DataObjects\NewRepositoryData;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class GithubRepositoryController extends Controller
@@ -52,11 +53,17 @@ class GithubRepositoryController extends Controller
     //     //
     // }
 
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
-    // public function destroy(string $id)
-    // {
-    //     //
-    // }
+    /**
+     * Remove the specified resource from storage.
+     */
+    public static function destroy(string $owner, string $repositoryName, GithubContract $githubService)
+    {
+        $githubService->deleteRepository($owner, $repositoryName);
+
+        session()->flash('status', 'Repository deleted successfully.');
+
+        return redirect()->route('repositories.index', [
+            'owner' => $owner,
+        ]);
+    }
 }

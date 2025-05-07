@@ -18,5 +18,7 @@ Route::prefix('repositories')
         Route::get('/{owner}/{repositoryName}', GithubRepositoryController::show(...))->name('show');
         Route::get('/{owner}', GithubRepositoryController::index(...))->name('index');
 
+        Route::delete('/{owner}/{repositoryName}', GithubRepositoryController::destroy(...))->name('destroy');
+
         Route::get('/{owner}/{repositoryName}/languages', ListGithubRepositoryLanguages::class)->name('languages');
     });

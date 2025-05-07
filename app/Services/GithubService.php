@@ -13,6 +13,7 @@ use App\DataObjects\NewRepositoryData;
 use App\Contracts\GithubContract;
 use App\Collections\Github\RepositoryCollection;
 use App\Http\Integrations\Github\Requests\CreateRepositoryRequest;
+use App\Http\Integrations\Github\Requests\DeleteRepositoryRequest;
 use App\Http\Integrations\Github\Requests\GetRepositoryLanguagesRequest;
 use Illuminate\Support\Facades\Log;
 use Saloon\Http\Auth\TokenAuthenticator;
@@ -79,7 +80,21 @@ final class GithubService implements GithubContract
 
     public function updateRepository(string $owner, string $repositoryName, UpdateRepositoryData $repositoryData): RepositoryData { }
 
-    public function deleteRepository(string $owner, string $repositoryName): void { }
+    public function deleteRepository(string $owner, string $repositoryName): void
+    {
+        $this->connector()
+            ->authenticate(
+                new TokenAuthenticator(
+                    $this->personalAccessToken
+                )
+            )
+            ->send(
+                new DeleteRepositoryRequest(
+                    $owner,
+                    $repositoryName,
+                )
+            );
+    }
 
     protected function connector(): GithubConnector
     {
