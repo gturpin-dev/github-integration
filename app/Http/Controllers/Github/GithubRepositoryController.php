@@ -29,16 +29,6 @@ class GithubRepositoryController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public static function store(NewRepositoryData $newRepositoryData, GithubContract $githubService)
-    {
-        return $githubService->createRepository(
-            $newRepositoryData
-        );
-    }
-
-    /**
      * Display the specified resource.
      */
     public static function show(string $owner, string $repositoryName, GithubContract $githubService)

@@ -14,7 +14,6 @@ Route::prefix('repositories')
     ->name('repositories.')
     ->group(function () {
         Route::get('/create', GithubRepositoryController::create(...))->name('create');
-        Route::post('/store', GithubRepositoryController::store(...))->name('store');
 
         Route::get('/{owner}/{repositoryName}', GithubRepositoryController::show(...))->name('show');
         Route::get('/{owner}', GithubRepositoryController::index(...))->name('index');
