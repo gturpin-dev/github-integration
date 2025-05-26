@@ -4,16 +4,26 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Collections\Github\RepositoryCollection;
-use App\Contracts\GithubContract;
+use PHPUnit\Framework\Assert;
+use Illuminate\Support\Collection;
+use Faker\Generator;
+use App\Exceptions\GithubException;
+use App\DataObjects\UpdateRepositoryData;
 use App\DataObjects\RepositoryData;
 use App\DataObjects\NewRepositoryData;
-use App\DataObjects\UpdateRepositoryData;
-use Faker\Generator;
+use App\Contracts\GithubContract;
+use App\Collections\Github\RepositoryCollection;
 
 final class GithubServiceFake implements GithubContract
 {
-    private Generator $faker;
+    private Collection $repositoriesToCreate;
+
+    private GithubException $failureException;
+
+    public function __construct()
+    {
+        $this->repositoriesToCreate = Collection::make();
+    }
 
     public function getRepositories(string $owner): RepositoryCollection
     {
@@ -36,7 +46,12 @@ final class GithubServiceFake implements GithubContract
 
     public function createRepository(NewRepositoryData $repositoryData): RepositoryData
     {
-        throw new \Exception('Not implemented');
+        $this->repositoriesToCreate = $this->repositoriesToCreate->push($repositoryData);
+
+        return $this->fakeRepositoryData(
+            repositoryName: $repositoryData->name,
+            isPrivate     : $repositoryData->isPrivate,
+        );
     }
 
     public function updateRepository(string $owner, string $repositoryName, UpdateRepositoryData $repositoryData): RepositoryData
@@ -49,12 +64,49 @@ final class GithubServiceFake implements GithubContract
         throw new \Exception('Not implemented');
     }
 
-    private function fakeRepositoryData(): RepositoryData
+    public function assertRepositoryCreated(
+        ?string $owner,
+        string $name,
+        bool $isPrivate,
+    ): void
+    {
+        $repositoryToBeCreated = $this->repositoriesToCreate
+            ->when($owner !== null, fn (Collection $repositories) => $repositories->where('owner', $owner) )
+            ->where('name', $name)
+            ->where('is_private', $isPrivate);
+
+        Assert::assertTrue(
+            $repositoryToBeCreated->isNotEmpty(),
+            'The repository was not created'
+        );
+    }
+
+    public function assertNoRepositoriesCreated(): void
+    {
+        Assert::assertEmpty(
+            $this->repositoriesToCreate,
+            'Repositories were created'
+        );
+    }
+
+    public function shouldFailWithException(GithubException $exception): self
+    {
+        $this->failureException = $exception;
+
+        return $this;
+    }
+
+    private function fakeRepositoryData(
+        ?string $owner = null,
+        ?string $repositoryName = null,
+        bool $isPrivate = false,
+    ): RepositoryData
     {
         $faker = app(Generator::class);
 
         $owner          ??= $faker->word();
         $repositoryName ??= $faker->word();
+        $isPrivate      ??= $faker->boolean();
 
         return new RepositoryData(
             id         : $faker->randomNumber(),
@@ -62,7 +114,7 @@ final class GithubServiceFake implements GithubContract
             name       : $repositoryName,
             fullName   : $owner . '/' . $repositoryName,
             description: $faker->sentence(),
-            isPrivate  : $faker->boolean(),
+            isPrivate  : $isPrivate,
             createdAt  : now()
         );
     }
