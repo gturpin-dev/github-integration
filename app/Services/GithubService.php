@@ -18,13 +18,13 @@ use App\Http\Integrations\Github\Requests\GetRepositoryLanguagesRequest;
 use Illuminate\Support\Facades\Log;
 use Saloon\Http\Auth\TokenAuthenticator;
 
-final class GithubService implements GithubContract
+final readonly class GithubService implements GithubContract
 {
     public function __construct(
-        private readonly string $installationId,
-        private readonly string $clientId,
-        private readonly string $privateKey,
-        private readonly string $personalAccessToken,
+        private string $installationId,
+        private string $clientId,
+        private string $privateKey,
+        private string $personalAccessToken,
     ) {}
 
     public function getRepositories(string $owner): RepositoryCollection {
