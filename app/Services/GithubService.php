@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataObjects\IssueData;
+use App\DataObjects\NewIssueData;
+use App\Http\Integrations\Github\Requests\CreateIssueRequest;
 use App\Http\Integrations\Github\Requests\GetRepositoryRequest;
 use App\Http\Integrations\Github\Requests\GetRepositoriesRequest;
 use App\Http\Integrations\Github\GithubConnector;
@@ -94,6 +97,19 @@ final readonly class GithubService implements GithubContract
                     $repositoryName,
                 )
             );
+    }
+
+    public function createIssue(string $owner, string $repositoryName, NewIssueData $newIssueData): IssueData
+    {
+        return $this->connector()
+            ->send(
+                new CreateIssueRequest(
+                    owner: $owner,
+                    repositoryName: $repositoryName,
+                    data: $newIssueData
+                )
+            )
+            ->dtoOrFail();
     }
 
     protected function connector(): GithubConnector

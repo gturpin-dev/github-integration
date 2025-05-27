@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Contracts;
 
+use App\DataObjects\IssueData;
+use App\DataObjects\NewIssueData;
 use App\DataObjects\UpdateRepositoryData;
 use App\DataObjects\RepositoryData;
 use App\DataObjects\NewRepositoryData;
@@ -25,4 +27,6 @@ interface GithubContract
     public function updateRepository(string $owner, string $repositoryName, UpdateRepositoryData $repositoryData): RepositoryData;
 
     public function deleteRepository(string $owner, string $repositoryName): void;
+
+    public function createIssue(string $owner, string $repositoryName, NewIssueData $newIssueData): IssueData;
 }
